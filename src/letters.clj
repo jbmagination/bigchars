@@ -2,7 +2,8 @@
   (:gen-class)
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.tools.logging :as log]))
 
 (def whitespace
   {\space [" "
@@ -82,8 +83,10 @@
                            (.getChannel message-received-event)))))
 
 (defn get-token []
-  (or (slurp (str (System/getenv "ENV_DIR") "/" "BOT_TOKEN"))
-      (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!"))))
+  (let [token (System/getenv "BOT_TOKEN")]
+    (log/info "bot token ====== " token)
+    (or  token
+         (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!")))))
 
 (defn -main [& args]
   (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
