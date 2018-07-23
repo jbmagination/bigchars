@@ -3,7 +3,8 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [ring.adapter.jetty :refer [run-jetty]]))
 
 (def whitespace
   {\space [" "
@@ -74,7 +75,7 @@
             _ (log/info "Font ==== " font)
             sentence (get-sentence pieces)
             _ (log/info "Sentence =-----= " sentence)
-            reply (big-character-strings {:font font :sentence sentence})
+            reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")
             _ (log/info "Reply is ---> " reply)]
         (.sendMessage channel reply)
         (.deleteMessageById channel (.getId message))))))
@@ -91,7 +92,15 @@
     (or  token
          (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!")))))
 
+(defn handler [req]
+  {:status  200
+   :headers {"Content-Type" "text/html"}
+   :body    "Hello from BigChars discord bot!"})
+
 (defn -main [& args]
+
+  (run-jetty #'handler {:port 8080 :join false})
+
   (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
     (.setToken (get-token))
     (.addEventListener (to-array [(bigchar-listener)]))
