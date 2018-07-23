@@ -64,6 +64,7 @@
 
 (defn on-message-received [message channel]
   (let [incoming (.getContentDisplay message)
+        _ (log/info "Incoming message ===== " incoming)
         pieces (str/split incoming #"\s+" 3)
         command (get-command pieces)]
     (when (= command "/big-chars")
