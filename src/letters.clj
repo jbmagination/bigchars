@@ -99,7 +99,7 @@
 
 (defn -main [& args]
 
-  (run-jetty #'handler {:port (Integer/parseInt (get (System/getenv) "PORT" "5000"))})
+  (run-jetty #'handler {:port (Integer/parseInt (get (System/getenv) "PORT" "5000")) :join? false})
 
   (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
     (.setToken (get-token))
