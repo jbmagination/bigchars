@@ -81,7 +81,6 @@
       (on-message-received (.getMessage message-received-event)
                            (.getChannel message-received-event)))))
 
-
 (defn get-token []
   (or (System/getenv "BOT_TOKEN")
       (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!"))))
@@ -89,5 +88,5 @@
 (defn -main [& args]
   (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
     (.setToken (get-token))
-    (.addEventListener (bigchar-listener))
+    (.addEventListener ^Object (bigchar-listener))
     (.buildBlocking)))
