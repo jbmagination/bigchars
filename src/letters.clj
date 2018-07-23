@@ -57,7 +57,7 @@
   (first (take 1 pieces)))
 
 (defn get-font [pieces]
-  (first  (take 1 (drop 1 pieces))))
+  (first (take 1 (drop 1 pieces))))
 
 (defn get-sentence [pieces]
   (first (drop 2 pieces)))
@@ -66,16 +66,18 @@
   (let [incoming (.getContentDisplay message)
         _ (log/info "Incoming message ===== " incoming)
         pieces (str/split incoming #"\s+" 3)
-        command (get-command pieces)]
+        _ (log/info "Pieces ----> " (into [] pieces))
+        command (get-command pieces)
+        _ (log/info "Command is: [" command "]")]
     (when (= command "/big-chars")
       (let [font (get-font pieces)
+            _ (log/info "Font ==== " font)
             sentence (get-sentence pieces)
-            reply (big-character-strings {:font font :sentence sentence})]
+            _ (log/info "Sentence =-----= " sentence)
+            reply (big-character-strings {:font font :sentence sentence})
+            _ (log/info "Reply is ---> " reply)]
         (.sendMessage channel reply)
         (.deleteMessageById channel (.getId message))))))
-
-(str/split "a" #"\s+" 3)
-
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
