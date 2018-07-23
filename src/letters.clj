@@ -88,5 +88,5 @@
 (defn -main [& args]
   (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
     (.setToken (get-token))
-    (.addEventListener ^Object (bigchar-listener))
+    (.addEventListener (to-array [(bigchar-listener)]))
     (.buildBlocking)))
