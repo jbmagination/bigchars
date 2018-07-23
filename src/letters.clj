@@ -79,8 +79,8 @@
             (-> channel
                 (.sendMessage reply)
                 (.queue))
-
-            (.delete message)))))))
+            (-> (.delete message)
+                (.queue))))))))
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
