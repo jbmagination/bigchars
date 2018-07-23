@@ -2,9 +2,7 @@
   (:gen-class)
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as str]
-            [discord.bot :as bot]
-            [discord.http :as http]))
+            [clojure.string :as str]))
 
 (def whitespace
   {\space [" "
@@ -40,43 +38,56 @@
 ;;(def load-font (memoize load-font*))
 (def load-font load-font*)
 
-(defn lines [{:keys [font sentence]}]
+(defn big-character-strings [{:keys [font sentence]}]
   (let [characters (load-font font)
         sentence (str/replace sentence " " "  ")
         chars (interleave (spaces (count sentence))
                           (mapv
                            characters
                            sentence))]
-    (reduce
-     (fn [v s]
-       (conj v s))
-     []
-     (apply map
+    (str/join
+     "\n"
+     (apply mapv
             (fn [& args]
               (apply str args))
             chars))))
 
-
-(defn get-font [pieces]
+(defn get-command [pieces]
   (first (take 1 pieces)))
 
+(defn get-font [pieces]
+  (first  (take 1 (drop 1 pieces))))
+
 (defn get-sentence [pieces]
-  (first (drop 1 pieces)))
+  (first (drop 2 pieces)))
 
-(bot/defcommand bc-write [client message]
-  "Tells the bot to echo back the content of your message and then deletes the user's original message."
-  (let [pieces (str/split message #"\s+" 1)
-        font (get-font pieces)
-        sentence (get-sentence pieces)
-        lines (lines {:font font :sentence sentence})])
-  (bot/say "```")
-  (mapv bot/say lines)
-  (bot/say "```")
-  (bot/delete message))
+(defn on-message-received [message channel]
+  (let [incoming (.getContentDisplay message)
+        pieces (str/split incoming #"\s+" 3)
+        command (get-command pieces)]
+    (when (= command "/big-chars")
+      (let [font (get-font pieces)
+            sentence (get-sentence pieces)
+            reply (big-character-strings {:font font :sentence sentence})]
+        (.sendMessage channel reply)
+        (.deleteMessageById channel (.getId message))))))
 
-(defn -main
-  "Creates a new discord bot and supplies a series of extensions to it."
-  [& args]
-  (bot/with-extensions
-    "BigCharacters" "/"
-    :big-chars @'bc-write))
+(str/split "a" #"\s+" 3)
+
+
+(defn bigchar-listener []
+  (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
+    (onMessageReceived [this ^net.dv8tion.jda.core.events.message.MessageReceivedEvent message-received-event]
+      (on-message-received (.getMessage message-received-event)
+                           (.getChannel message-received-event)))))
+
+
+(defn get-token []
+  (or (System/getenv "BOT_TOKEN")
+      (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!"))))
+
+(defn -main [& args]
+  (doto (net.dv8tion.jda.core.JDABuilder. net.dv8tion.jda.core.AccountType/BOT)
+    (.setToken (get-token))
+    (.addEventListener (bigchar-listener))
+    (.buildBlocking)))

@@ -8,7 +8,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [discord.clj "1.1.1"]]
+                 [net.dv8tion/JDA "3.7.1_386" :exclusions [club.minced/opus-java]]]
+
+  :repositories [["jcenter" {:url "https://jcenter.bintray.com"}]]
 
   :aot :all
   :main letters)
