@@ -71,11 +71,16 @@
       (let [font (get-font pieces)
             sentence (get-sentence pieces)
             reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")]
-        (-> channel
-            (.sendMessage reply)
-            (.queue))
-        (-> channel
-            (.deleteMessageById (.getId message)))))))
+        (if (> (count reply) 2000)
+          (-> channel
+              (.sendMessage "Message exceeds discord's 2000 character limit!")
+              (.queue))
+          (do
+            (-> channel
+                (.sendMessage reply)
+                (.queue))
+            (-> channel
+                (.deleteMessageById (.getId message)))))))))
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
