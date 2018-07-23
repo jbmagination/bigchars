@@ -82,7 +82,7 @@
                            (.getChannel message-received-event)))))
 
 (defn get-token []
-  (or (System/getenv "BOT_TOKEN")
+  (or (slurp (str (System/getenv "ENV_DIR") "/" "BOT_TOKEN"))
       (throw (IllegalStateException. "BOT_TOKEN env var is NOT set!!"))))
 
 (defn -main [& args]
