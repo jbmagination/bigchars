@@ -77,8 +77,12 @@
             _ (log/info "Sentence =-----= " sentence)
             reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")
             _ (log/info "Reply is ---> " reply)]
-        (.sendMessage channel reply)
-        (.deleteMessageById channel (.getId message))))))
+        (-> channel
+            (.sendMessage reply)
+            (.queue))
+        (-> channel
+            (.deleteMessageById (.getId message))
+            (.queue))))))
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
