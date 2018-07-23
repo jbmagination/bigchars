@@ -78,7 +78,7 @@
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
-    (onMessageReceived [this ^net.dv8tion.jda.core.events.message.MessageReceivedEvent message-received-event]
+    (onMessageReceived [^net.dv8tion.jda.core.events.message.MessageReceivedEvent message-received-event]
       (on-message-received (.getMessage message-received-event)
                            (.getChannel message-received-event)))))
 
