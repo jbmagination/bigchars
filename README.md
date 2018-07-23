@@ -1,10 +1,11 @@
-# letters
+# Big Characters
 
-A Clojure library designed to output big characters to Discord.
+A Clojure bot designed to output big characters to Discord.
 
 ## Usage
 
-FIXME
+![Usage Image](https://i.gyazo.com/5291e2af44c8dcd2bc504439a6b09013.png)
+
 
 ## License
 
