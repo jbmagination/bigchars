@@ -65,24 +65,17 @@
 
 (defn on-message-received [message channel]
   (let [incoming (.getContentDisplay message)
-        _ (log/info "Incoming message ===== " incoming)
         pieces (str/split incoming #"\s+" 3)
-        _ (log/info "Pieces ----> " (into [] pieces))
-        command (get-command pieces)
-        _ (log/info "Command is: [" command "]")]
+        command (get-command pieces)]
     (when (= command "/big-chars")
       (let [font (get-font pieces)
-            _ (log/info "Font ==== " font)
             sentence (get-sentence pieces)
-            _ (log/info "Sentence =-----= " sentence)
-            reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")
-            _ (log/info "Reply is ---> " reply)]
+            reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")]
         (-> channel
             (.sendMessage reply)
             (.queue))
         (-> channel
-            (.deleteMessageById (.getId message))
-            (.queue))))))
+            (.deleteMessageById (.getId message)))))))
 
 (defn bigchar-listener []
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
