@@ -74,9 +74,8 @@
                    "\n"
                    ["```"
                     (big-character-strings {:font font :sentence sentence})
-                    "\n"
-                    (format "From [%s]" (.getName user))
-                    "```"])]
+                    "```"
+                    (format "From [%s]" (.getName user))])]
         (if (> (count reply) 2000)
           (-> channel
               (.sendMessage "Message exceeds discord's 2000 character limit!")
