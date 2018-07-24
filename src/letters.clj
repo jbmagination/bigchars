@@ -63,14 +63,20 @@
 (defn get-sentence [pieces]
   (first (drop 2 pieces)))
 
-(defn on-message-received [message channel]
+(defn on-message-received [message channel user]
   (let [incoming (.getContentDisplay message)
         pieces (str/split incoming #"\s+" 3)
         command (get-command pieces)]
     (when (= command "/big-chars")
       (let [font (get-font pieces)
             sentence (get-sentence pieces)
-            reply (str "\n```\n" (big-character-strings {:font font :sentence sentence}) "\n```\n")]
+            reply (str/join
+                   "\n"
+                   ["```"]
+                   (big-character-strings {:font font :sentence sentence})
+                   "\n"
+                   (format "From [%s]" (.getName user))
+                   "```")]
         (if (> (count reply) 2000)
           (-> channel
               (.sendMessage "Message exceeds discord's 2000 character limit!")
@@ -86,7 +92,8 @@
   (proxy [net.dv8tion.jda.core.hooks.ListenerAdapter] []
     (onMessageReceived [^net.dv8tion.jda.core.events.message.MessageReceivedEvent message-received-event]
       (on-message-received (.getMessage message-received-event)
-                           (.getChannel message-received-event)))))
+                           (.getChannel message-received-event)
+                           (.getAuthor message-received-event)))))
 
 (defn get-token []
   (let [token (System/getenv "BOT_TOKEN")]
