@@ -6,21 +6,19 @@
             [clojure.tools.logging :as log]
             [ring.adapter.jetty :refer [run-jetty]]))
 
-(def whitespace
-  {\space [" "
-           " "
-           " "
-           " "
-           " "
-           " "
-           " "
-           " "
-           " "
-           " "
-           " "]})
+(defn upper-case [c]
+  (first (str/upper-case c)))
 
-(defn spaces [n]
-  (take n (repeat (whitespace \space))))
+(defn lower-case [c]
+  (first (str/lower-case c)))
+
+(defn get-character [characters c]
+  (or (characters c)
+      (characters (upper-case c))
+      (characters (lower-case c))))
+
+(defn spaces [characters n]
+  (take n (repeat (characters \space))))
 
 (defn print-letter [c characters]
   (println
@@ -29,23 +27,20 @@
     (get characters c))))
 
 (defn load-font* [font]
-  (let [characters (edn/read-string
-                    (slurp
-                     (or (io/resource (str font ".edn"))
-                         (io/input-stream (io/file (str font ".edn"))))))]
-    (merge
-     characters
-     whitespace)))
+  (edn/read-string
+   (slurp
+    (or (io/resource (str font ".edn"))
+        (io/input-stream (io/file (str font ".edn")))))))
 
-;;(def load-font (memoize load-font*))
-(def load-font load-font*)
+(def load-font (memoize load-font*))
+;;(def load-font load-font*)
 
 (defn big-character-strings [{:keys [font sentence]}]
   (let [characters (load-font font)
         sentence (str/replace sentence " " "  ")
-        chars (interleave (spaces (count sentence))
+        chars (interleave (spaces characters (count sentence))
                           (mapv
-                           characters
+                           (partial get-character characters)
                            sentence))]
     (str/join
      "\n"
