@@ -15,7 +15,8 @@
 (defn get-character [characters c]
   (or (characters c)
       (characters (upper-case c))
-      (characters (lower-case c))))
+      (characters (lower-case c))
+      (characters \space)))
 
 (defn spaces [characters n]
   (take n (repeat (characters \space))))
