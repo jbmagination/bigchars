@@ -2,6 +2,9 @@
 
 A Clojure bot designed to output big characters to Discord.
 
+## Permission
+I give Brian Abbott the permission to fork and display the code from this project, however it cannot be modified in any way by him unless stated otherwise in the distribution license or by me.
+
 ## Usage
 1) Get the bot [here](https://jbmagination.github.io/bigchars/invite) or [here.](https://discordapp.com/oauth2/authorize?client_id=470988744447754250&scope=bot&permissions=523336)
 
